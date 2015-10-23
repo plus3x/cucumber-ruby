@@ -41,6 +41,14 @@ default: <%= x %>
         given_cucumber_yml_defined_as yml
         expect(loader.args_from('default')).to eq ['--format','pretty','features/sync_imap_mailbox.feature:16:22']
       end
+
+      it 'flattening nested profiles' do
+        yml = { 'browser' => { 'safari' => 'DRIVER=selenium BROWSER=safari --tags ~@safari_exclude' } }
+        given_cucumber_yml_defined_as(yml)
+
+        loader.args_from('browser.safari')
+        .should == ['DRIVER=selenium', 'BROWSER=safari', '--tags', '~@safari_exclude']
+      end
     end
   end
 end

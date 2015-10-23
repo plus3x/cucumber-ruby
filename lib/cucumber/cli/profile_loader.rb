@@ -4,6 +4,7 @@ module Cucumber
   module Cli
 
     class ProfileLoader
+      SEPARATOR = '.'
 
       def initialize
         @cucumber_yml = nil
@@ -75,7 +76,7 @@ Defined profiles in cucumber.yml:
           raise(YmlLoadError,"cucumber.yml was found, but was blank or malformed. Please refer to cucumber's documentation on correct profile usage.\n")
         end
 
-        return @cucumber_yml
+        @cucumber_yml = flatten_keys(@cucumber_yml)
       end
 
       # Locates cucumber.yml file. The file can end in .yml or .yaml,
@@ -85,6 +86,16 @@ Defined profiles in cucumber.yml:
         @cucumber_file ||= Dir.glob('{,.config/,config/}cucumber{.yml,.yaml}').first
       end
 
+      def flatten_keys(hash, previous_key = nil)
+        hash.inject({}) do |hash, (key, value)|
+          current_key = [previous_key, key].compact.join(SEPARATOR)
+          if value.is_a?(Hash)
+            hash.merge(flatten_keys(value, current_key))
+          else
+            hash.merge({ current_key => value })
+          end
+        end
+      end
     end
   end
 end
