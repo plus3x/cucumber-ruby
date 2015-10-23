@@ -46,8 +46,7 @@ default: <%= x %>
         yml = { 'browser' => { 'safari' => 'DRIVER=selenium BROWSER=safari --tags ~@safari_exclude' } }
         given_cucumber_yml_defined_as(yml)
 
-        loader.args_from('browser.safari')
-        .should == ['DRIVER=selenium', 'BROWSER=safari', '--tags', '~@safari_exclude']
+        expect(loader.args_from('browser.safari')).to eq ['DRIVER=selenium', 'BROWSER=safari', '--tags', '~@safari_exclude']
       end
     end
   end
